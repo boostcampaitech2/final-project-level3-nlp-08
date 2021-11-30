@@ -3,3 +3,6 @@ train2014/
 imgs/
 humor_data.csv
 imgs.zip
+.vscode
+data/
+outputs/
