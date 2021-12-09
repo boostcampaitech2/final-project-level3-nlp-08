@@ -4,6 +4,7 @@ from PIL import Image
 import os
 from time import perf_counter
 import requests
+import logging
 
 from transformers import (
     VisionEncoderDecoderModel,
@@ -16,6 +17,8 @@ from transformers import (
 )
 import torch
 import numpy as np
+
+import sqlite3
 
 app = Flask(__name__)
 
@@ -64,8 +67,6 @@ def generate_poem(input_text):
 
     with torch.no_grad():
         # Check generation time
-        t = perf_counter()
-
         output = poem_generator.generate(
             input_ids,
             max_length=64,
@@ -77,18 +78,16 @@ def generate_poem(input_text):
             top_k=30,
             top_p=0.95,
         )
+
         generated_text = poem_tokenizer.decode(output[0])
 
-        spent = perf_counter() - t
+        # print("generated text:", generated_text, sep="\n")
 
-        print("generated text:", generated_text, sep="\n")
-        print(f"\ntime spent: {spent:.2f} sec")
     return generated_text
 
 
-def captioning(img_url):
-    with Image.open(requests.get(img_url, stream=True).raw) as img:
-        pixel_values = feature_extractor(images=img, return_tensors="pt").pixel_values
+def captioning(pixel_values):
+
     generated_ids = model.generate(pixel_values.to(device), num_beams=5)
     generated_text = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
 
@@ -98,8 +97,31 @@ def captioning(img_url):
 @app.route("/generate", methods=["GET", "POST"])
 def generate():
     if request.method == "POST":
+        t = perf_counter()
         content = request.json
-        img_url = content["img_url"]
+
+        if content:
+            img_url = request.json.get("img_url", "")
+            try:
+                img = Image.open(requests.get(img_url, stream=True).raw)
+            except:
+                return "올바르지 않은 url입니다."
+        else:
+            img = Image.open(request.files["img"]).convert("RGB")
+
+        if not img:
+            return "잘못된 이미지"
+
+        # try:
+        #     pixel_values = feature_extractor(
+        #         images=img, return_tensors="pt"
+        #     ).pixel_values
+        #     description = captioning(pixel_values)
+        #     generated_text = generate_poem(description[0])
+        # except:
+        #     return "잘못된 이미지"
+
+        print("time: ", (perf_counter() - t))
 
         # TODO: input 형식 확인
         # request: image
@@ -117,10 +139,7 @@ def generate():
 
         # input_ids = model(image).input_ids
         # tokenizer.decode(input_ids)
-        t = perf_counter()
-        description = captioning(img_url)
-        generated_text = generate_poem(description[0])
-        print("time: ", (perf_counter() - t))
+
         # response: string
         #     if phase == "sentiment":
         #         return redirect(url_fol("http://localhost/generate/sentiment"))
@@ -166,28 +185,28 @@ def generate():
 
 
 if __name__ == "__main__":
-    poem_generator = AutoModelForCausalLM.from_pretrained(
-        "CheonggyeMountain-Sherpa/kogpt-trinity-poem", use_auth_token=True
-    )
-    poem_tokenizer = AutoTokenizer.from_pretrained(
-        "CheonggyeMountain-Sherpa/kogpt-trinity-poem", use_auth_token=True
-    )
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # device = "cpu"
-    poem_generator.to(device)
-    poem_generator.eval()
-    print("capitoning_model load")
-    # device setting
+    # poem_generator = AutoModelForCausalLM.from_pretrained(
+    #     "CheonggyeMountain-Sherpa/kogpt-trinity-poem", use_auth_token=True
+    # )
+    # poem_tokenizer = AutoTokenizer.from_pretrained(
+    #     "CheonggyeMountain-Sherpa/kogpt-trinity-poem", use_auth_token=True
+    # )
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # # device = "cpu"
+    # poem_generator.to(device)
+    # poem_generator.eval()
+    # print("capitoning_model load")
+    # # device setting
 
-    # load feature extractor and tokenizer
-    encoder_model_name_or_path = "ddobokki/vision-encoder-decoder-vit-gpt2-coco-ko"
-    feature_extractor = ViTFeatureExtractor.from_pretrained(encoder_model_name_or_path)
-    tokenizer = PreTrainedTokenizerFast.from_pretrained(encoder_model_name_or_path)
+    # # load feature extractor and tokenizer
+    # encoder_model_name_or_path = "ddobokki/vision-encoder-decoder-vit-gpt2-coco-ko"
+    # feature_extractor = ViTFeatureExtractor.from_pretrained(encoder_model_name_or_path)
+    # tokenizer = PreTrainedTokenizerFast.from_pretrained(encoder_model_name_or_path)
 
-    # load model
-    model = VisionEncoderDecoderModel.from_pretrained(encoder_model_name_or_path)
-    model.to(device)
-    print("generator model load")
+    # # load model
+    # model = VisionEncoderDecoderModel.from_pretrained(encoder_model_name_or_path)
+    # model.to(device)
+    # print("generator model load")
 
     app.run(host="0.0.0.0", port=6006, debug=True)
     # # generate_poem("아아아아아아아아")
