@@ -1,3 +1,4 @@
+from io import BytesIO
 from flask import Flask, request, redirect
 
 from PIL import Image
@@ -5,6 +6,7 @@ import os
 from time import perf_counter
 import requests
 import logging
+import base64
 
 from transformers import (
     VisionEncoderDecoderModel,
@@ -152,6 +154,23 @@ def generate():
 
         # elif request.method == "GET":
         #     return "이미지를 POST 형식으로 보내주세요"
+
+        buffer = BytesIO()
+        img.save(buffer, format="jpeg")
+        imgbytes = buffer.getvalue()
+
+        conn = sqlite3.connect("db.db")
+        cursor = conn.cursor()
+
+        client_id = "ashhhhhdf"
+        generated_text = "aaaa"
+
+        cursor.execute("insert or IGNORE into CLIENT (ID) values (?)", [client_id])
+        cursor.execute(
+            "insert into  POEM (CLIENT_ID, IMG, POEM) values (?, ?, ?)",
+            [client_id, imgbytes, generated_text],
+        )
+        conn.commit()
         return generated_text
 
 
