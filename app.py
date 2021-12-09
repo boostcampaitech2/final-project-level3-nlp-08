@@ -61,7 +61,20 @@ def feedback():
     # 1) front -> 사용자가 최근에 생성했던 시 목록을 줌 -> 사용자가 선택 -> 시 아이디랑 같이 backend 보내는작업 <-- 범용성을 챙기기 힘듬
     # 2) Client ID -> DB (latest poem or last created)
     # 사용자에게 보내준 시를 Db 에서 찾고, 피드백 준 부분에 대하여 수정하여 다시 반환
-    pass
+    client_id = "ashhhhhdf"
+
+    conn = sqlite3.connect("db.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        f'select poem_id from poem where client_id="{client_id}" order by lastcreated desc limit 1'
+    )
+    poem_id = cursor.fetchone()[0]
+    feedback = 3
+    print(poem_id)
+    cursor.execute(f"update poem set feedback={feedback} where poem_id={poem_id};")
+    conn.commit()
+    return "success"
 
 
 def generate_poem(input_text):
@@ -168,7 +181,7 @@ def generate():
         cursor.execute("insert or IGNORE into CLIENT (ID) values (?)", [client_id])
         cursor.execute(
             "insert into  POEM (CLIENT_ID, IMG, POEM) values (?, ?, ?)",
-            [client_id, imgbytes, generated_text],
+            (client_id, imgbytes, generated_text),
         )
         conn.commit()
         return generated_text
@@ -230,4 +243,3 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=6006, debug=True)
     # # generate_poem("아아아아아아아아")
     # print(captioning("http://images.cocodataset.org/val2017/000000039769.jpg"))
-
