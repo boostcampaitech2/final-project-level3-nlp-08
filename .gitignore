@@ -139,4 +139,4 @@ outputs/
 node_modules/
 
 # web
-web/assets/
+web/assets/uploads/
