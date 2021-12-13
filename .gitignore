@@ -134,3 +134,9 @@ dmypy.json
 # Data & Model
 data/
 outputs/
+
+# npm
+node_modules/
+
+# web
+web/assets/
