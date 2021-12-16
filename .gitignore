@@ -7,3 +7,7 @@ imgs.zip
 data/
 outputs/
 finetuned/
+wandb/
+results/
+nohup.out
+poem_generator/
