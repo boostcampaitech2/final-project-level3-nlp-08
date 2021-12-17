@@ -10,4 +10,5 @@ finetuned/
 wandb/
 results/
 nohup.out
-poem_generator/
+poem_generator/model
+.ipynb_checkpoints
