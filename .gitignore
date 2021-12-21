@@ -1,14 +1,3 @@
-val2014/
-train2014/
-imgs/
-humor_data.csv
-imgs.zip
-.vscode
-data/
-outputs/
-finetuned/
 wandb/
-results/
-nohup.out
-poem_generator/model
-.ipynb_checkpoints
+finetuned/
+
