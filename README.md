@@ -18,9 +18,6 @@
 |<img src="https://avatars.githubusercontent.com/u/47588410?v=4" width = 70>|<img src="https://avatars.githubusercontent.com/u/84180121?v=4" width=70>|<img src="https://i.imgur.com/0TZjPyB.png" width=70>|<img src="https://i.imgur.com/pH7lc7S.png" width=70>|<img src="https://i.imgur.com/ctCliqs.png" width=70>|<img src="https://i.imgur.com/5mNWwpx.png" width=70>|<img src="https://i.imgur.com/nDFsXev.png" width=70>|
 | :--------: | :--------: | :--------: | :--------: | :--------: | :--------: | :--------: |
 |[T2011] 곽진성<br>[@jskwak98](https://github.com/jskwak98)|[T2025] 김민수<br>[@lexiconium](https://github.com/lexiconium)|[T2076] 문하겸<br>[@ddobokki](https://github.com/ddobokki)|[T2166] 이요한<br> [@l-yohai](https://github.com/l-yohai)|[T2195] <br> 전준영<br> [@20180707jun](https://github.com/20180707jun)|[T2206] 정진원<br> [@godjw](https://github.com/godjw)|[T2210] 정희영<br> [@hyeong01](https://github.com/hyeong01)|
-|1|2|3|4|5|6|7|
-|1|2|3|4|5|6|7|
-|1|2|3|4|5|6|7|
 
 
 
