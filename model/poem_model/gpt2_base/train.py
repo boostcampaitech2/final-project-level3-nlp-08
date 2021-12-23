@@ -1,15 +1,12 @@
 import os
 import argparse
 from transformers import (
-    AutoTokenizer,
     AutoModelForCausalLM,
     TrainingArguments,
     Trainer,
     PreTrainedTokenizerFast,
 )
 import pandas as pd
-from torch.utils.data import Dataset
-from nltk.translate.bleu_score import corpus_bleu
 from sklearn.model_selection import train_test_split
 import torch
 import os
@@ -90,6 +87,8 @@ def main(args):
         # compute_metrics = compute_metrics,
     )
     trainer.train()
+    model.save_pretrained(args.output_dir)
+    tokenizer.save_pretrained(args.output_dir)
 
 
 if __name__ == "__main__":
@@ -98,10 +97,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--data_dir", type=str, default="../../../data/poem_data/preprocess_data"
     )
-    parser.add_argument("--model_dir", type=str, default="./model")
     parser.add_argument("--output_dir", type=str, default="./output")
     parser.add_argument("--model_name_or_path", type=str, default="skt/kogpt2-base-v2")
-    parser.add_argument("--train_filename", type=str, default="poem.csv")
+    parser.add_argument("--train_filename", type=str, default="poem_with_keyowrd.csv")
 
     # train_arg
     parser.add_argument("--num_labels", type=int, default=3)
