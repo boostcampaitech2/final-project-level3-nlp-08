@@ -137,15 +137,8 @@ outputs/
 
 wandb/
 finetuned/
-<<<<<<< HEAD
-train2014/
-original_new/
-outputs/
-MSCOCO_train_val_Korean.json
-=======
 checkpoints/
 dataset/
 data/caption_data/MSCOCO_train_val_Korean.json
 checkpoints/
 dataset/
->>>>>>> 73d83ad07e1396ea780ea1e832c16a68682c663f
