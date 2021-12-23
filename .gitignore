@@ -134,3 +134,8 @@ dmypy.json
 # Data & Model
 data/
 outputs/
+
+wandb/
+finetuned/
+checkpoints/
+dataset/
