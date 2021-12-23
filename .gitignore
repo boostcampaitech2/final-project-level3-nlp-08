@@ -1,3 +1,6 @@
 wandb/
 finetuned/
-
+train2014/
+original_new/
+outputs/
+MSCOCO_train_val_Korean.json
