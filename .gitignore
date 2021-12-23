@@ -140,3 +140,5 @@ finetuned/
 checkpoints/
 dataset/
 data/caption_data/MSCOCO_train_val_Korean.json
+checkpoints/
+dataset/
