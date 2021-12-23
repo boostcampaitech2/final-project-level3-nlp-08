@@ -52,7 +52,7 @@ std = [0.229, 0.224, 0.225]
 # Training
 
 시작 전에 훈련에 필요한 데이터를 만들어야합니다. 이는 [`create_input_files.py`](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell/create_input_files.py)을 Karpathy JSON file과 `train2014` and `val2014` 이미지 폴더로 point 해주고 실행하면 됩니다.
-See [`train.py`](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell/train.py).
+[`train.py`](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell/train.py).
 
 처음부터 모델을 훈련하고 싶다면 
 
@@ -60,13 +60,9 @@ See [`train.py`](https://github.com/boostcampaitech2/final-project-level3-nlp-08
 
 # Inference
 
-See [`caption.py`](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell/caption.py).
-
-command line 에서**caption an image** 를 하기 위해서는 다음과 같은 명령어를 쳐주면 됩니다 –
+command line 에서 **caption an image** 를 하기 위해서는 다음과 같은 명령어를 쳐주면 됩니다 –
 
 `python caption.py --img='path/to/image.jpeg' --model='path/to/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar' --word_map='path/to/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json' --beam_size=5`
-
-Alternatively, use the functions in the file as needed.
 
 [`eval.py`](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell/eval.py)에서는 validation set에 대한 BLEU-4 score를 계산해줍니다.
 
