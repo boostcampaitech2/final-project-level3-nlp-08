@@ -1,4 +1,5 @@
 import os
+import warnings
 
 from transformers import (
     VisionEncoderDecoderModel,
@@ -6,9 +7,10 @@ from transformers import (
     AutoTokenizer,
     VisionEncoderDecoderModel,
     ViTFeatureExtractor,
-    PreTrainedTokenizerFast,
 )
 import torch
+
+from PIL import Image
 
 from utils import ModelArgNames, generate_poems_from_image
 
@@ -23,8 +25,8 @@ def load_models(device):
         ModelArgNames.vit: VisionEncoderDecoderModel.from_pretrained(vit).to(device),
         ModelArgNames.vit_feature_extractor: ViTFeatureExtractor.from_pretrained(vit),
         ModelArgNames.vit_tokenizer: AutoTokenizer.from_pretrained(vit),
-        ModelArgNames.gpt2_trinity: AutoModelForCausalLM.from_pretrained(gpt2_trinity).to(device),
-        ModelArgNames.gpt2_trinity_tokenizer: AutoTokenizer.from_pretrained(gpt2_trinity),
+        ModelArgNames.gpt2_trinity: AutoModelForCausalLM.from_pretrained(gpt2_trinity, use_auth_token=True).to(device),
+        ModelArgNames.gpt2_trinity_tokenizer: AutoTokenizer.from_pretrained(gpt2_trinity, use_auth_token=True),
         ModelArgNames.gpt2_base: AutoModelForCausalLM.from_pretrained(gpt2_base).to(device),
         ModelArgNames.gpt2_base_tokenizer: AutoTokenizer.from_pretrained(gpt2_base),
     }
@@ -37,9 +39,12 @@ if __name__ == "__main__":
 
     src_dir = "imgs"
     for filename in os.listdir(src_dir):
-        if filename.split(".")[-1] not in ["jpg", "jpeg", "png"]:
+        if (ext := filename.split(".")[-1]) not in ["jpg", "jpeg", "png"]:
+            warnings.warn(f"Inappropriate extension type: {ext}", Warning)
             continue
 
         img_path = os.path.join(src_dir, filename)
-        generated_texts = generate_poems_from_image(**models_dict, img_path=img_path, device=device)
+        img = Image.open(img_path).convert("RGB")
+
+        generated_texts = generate_poems_from_image(**models_dict, img=img, device=device)
         print(generated_texts)
