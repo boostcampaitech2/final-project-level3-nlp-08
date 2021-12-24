@@ -60,7 +60,7 @@ python model/gpt2_base_train.py
 
 # gpt2 trinity
 ```
-Poem generator model의 경우 저희가 학습시킨 이후 서비스에서 사용하는 가중치는 [이곳](https://huggingface.co/ddobokki/gpt2_poem)에 공개되어 있습니다.
+Poem generator model의 경우 저희가 학습시킨 이후 서비스에서 사용하는 가중치는 [이곳](https://huggingface.co/ddobokki/gpt2_poem)과 [이곳](https://huggingface.co/CheonggyeMountain-Sherpa/kogpt-trinity-poem)에 공개되어 있습니다.
 
 ### Inference
 **Caption Model**
