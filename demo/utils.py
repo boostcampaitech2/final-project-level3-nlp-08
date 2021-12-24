@@ -1,7 +1,4 @@
-import os
 from typing import Union
-
-from PIL import Image
 
 from transformers import (
     VisionEncoderDecoderModel,
@@ -58,7 +55,6 @@ def generate_from_trinity(
             num_return_sequences=3,
         )
         generated_texts = list(map(lambda x: tokenizer.decode(x, skip_special_tokens=True), outputs))
-        generated_texts = map(lambda x: "\n".join(x.split("\n")[1:]), generated_texts)
 
     return generated_texts
 
@@ -74,12 +70,13 @@ def generate_from_base(
     with torch.no_grad():
         outputs = model.generate(input_ids, max_length=100, num_beams=10, no_repeat_ngram_size=2)
         generated_texts = list(map(lambda x: tokenizer.decode(x, skip_special_tokens=True), outputs))
-        generated_texts = map(lambda x: "\n".join(x.split("\n")[1:]), generated_texts)
+    
+    return generated_texts
 
 
 def generate_from(generation_function: Union[generate_from_trinity, generate_from_base], **kwargs):
     generated_texts = generation_function(**kwargs)
-    return list(map(lambda x: "\n".join(x.split("\n")[:-1]), generated_texts))
+    return list(map(lambda x: "\n".join(x.split("\n")[1:-1]), generated_texts))
 
 
 def generate_poems_from_image(
@@ -90,44 +87,35 @@ def generate_poems_from_image(
     gpt2_trinity_tokenizer: Union[PreTrainedTokenizer, PreTrainedTokenizerFast],
     gpt2_base: GPT2LMHeadModel,
     gpt2_base_tokenizer: Union[PreTrainedTokenizer, PreTrainedTokenizerFast],
-    img_path: str,
+    img,
     device,
 ):
-    try:
-        img = Image.open(img_path).convert("RGB")
-    except:
-        return f"No image named {img_path} found."
+    pixel_values = vision_encoder_decoder_feature_extractor(images=img, return_tensors="pt").pixel_values
+    description = generate_caption(
+        vision_encoder_decoder_model, vision_encoder_decoder_tokenizer, pixel_values, device
+    )
 
-    try:
-        pixel_values = vision_encoder_decoder_feature_extractor(images=img, return_tensors="pt").pixel_values
-        description = generate_caption(
-            vision_encoder_decoder_model, vision_encoder_decoder_tokenizer, pixel_values
-        )
+    trinity_input = "@" + description[0] + "@"
+    base_input = "<k>" + description[0] + "</k>"
 
-        trinity_input = "@" + description[0] + "@"
-        base_input = "<k>" + description[0] + "</k>"
+    generated_texts = []
 
-        generated_texts = []
+    _generated_texts = generate_from(
+        generate_from_trinity,
+        model=gpt2_trinity,
+        tokenizer=gpt2_trinity_tokenizer,
+        input_text=trinity_input,
+        device=device,
+    )
+    generated_texts.extend(_generated_texts)
 
-        _generated_texts = generate_from(
-            generate_from_trinity,
-            model=gpt2_trinity,
-            tokenizer=gpt2_trinity_tokenizer,
-            input_text=trinity_input,
-            device=device,
-        )
-        generated_texts.extend(_generated_texts)
-
-        _generated_texts = generate_from(
-            generate_from_base,
-            model=gpt2_base,
-            tokenizer=gpt2_base_tokenizer,
-            input_text=base_input,
-            device=device,
-        )
-        generated_texts.extend(_generated_texts)
-
-    except:
-        return "Failed to generate poems."
+    _generated_texts = generate_from(
+        generate_from_base,
+        model=gpt2_base,
+        tokenizer=gpt2_base_tokenizer,
+        input_text=base_input,
+        device=device,
+    )
+    generated_texts.extend(_generated_texts)
 
     return generated_texts
