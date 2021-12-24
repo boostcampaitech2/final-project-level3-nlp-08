@@ -10,6 +10,7 @@ from transformers import (
 
 import torch
 
+from PIL import Image
 
 class ModelArgNames:
     vit = "vision_encoder_decoder_model"
@@ -87,9 +88,10 @@ def generate_poems_from_image(
     gpt2_trinity_tokenizer: Union[PreTrainedTokenizer, PreTrainedTokenizerFast],
     gpt2_base: GPT2LMHeadModel,
     gpt2_base_tokenizer: Union[PreTrainedTokenizer, PreTrainedTokenizerFast],
-    img,
+    img_path,
     device,
 ):
+    img = Image.open(img_path).convert("RGB")
     pixel_values = vision_encoder_decoder_feature_extractor(images=img, return_tensors="pt").pixel_values
     description = generate_caption(
         vision_encoder_decoder_model, vision_encoder_decoder_tokenizer, pixel_values, device
