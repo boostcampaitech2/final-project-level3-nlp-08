@@ -1,29 +1,18 @@
 import argparse
-
-from caption_model.vit_gpt2.run_train import train
-
+from poem_model.gpt2_base.run_train import train
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # data_arg
-    parser.add_argument("--output_dir", type=str, default="./vit_gpt2_caption_model")
-    parser.add_argument("--data_dir", type=str, default="../data/caption_data")
+    parser.add_argument("--output_dir", type=str, default="./gpt2_base")
     parser.add_argument(
-        "--ms_coco_kor_file_path",
-        type=str,
-        default="../data/caption_data/MSCOCO_train_val_Korean.json",
+        "--data_dir", type=str, default="../data/poem_data/preprocess_data"
     )
-    parser.add_argument(
-        "--encoder_model_name_or_path",
-        type=str,
-        default="google/vit-base-patch16-224-in21k",
-    )
-    parser.add_argument(
-        "--decoder_model_name_or_path", type=str, default="skt/kogpt2-base-v2"
-    )
+    parser.add_argument("--model_name_or_path", type=str, default="skt/kogpt2-base-v2")
+    parser.add_argument("--train_filename", type=str, default="poem_with_keyowrd.csv")
 
     # train_arg
-    parser.add_argument("--num_labels", type=int, default=1)
+    parser.add_argument("--num_labels", type=int, default=3)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--num_train_epochs", type=int, default=5)
     parser.add_argument("--batch_size", type=int, default=64)
