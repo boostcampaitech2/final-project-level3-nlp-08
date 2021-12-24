@@ -22,7 +22,7 @@ import sys
 import wandb
 
 from arguments import ModelArguments, DataTrainingArguments, TrainingArguments
-from utils import group_texts
+from utils import group_texts, send_along, tokenize_function
 
 import datasets
 from datasets import load_dataset
@@ -38,7 +38,7 @@ from transformers import (
     default_data_collator,
     set_seed,
 )
-from transformers.testing_utils import CaptureLogger
+
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
 from transformers.utils.versions import require_version
@@ -55,7 +55,7 @@ def main():
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
-    # Setup logging
+    # 로깅 세팅
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         datefmt="%m/%d/%Y %H:%M:%S",
@@ -69,14 +69,13 @@ def main():
     transformers.utils.logging.enable_default_handler()
     transformers.utils.logging.enable_explicit_format()
 
-    # Log on each process the small summary:
     logger.warning(
         f"Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}"
         + f"distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16}"
     )
     logger.info(f"Training/evaluation parameters {training_args}")
 
-    # Detecting last checkpoint.
+    # 체크포인트로부터 학습할 수 있도록, 존재한다면 체크포인트를 찾습니다.
     last_checkpoint = None
     if (
         os.path.isdir(training_args.output_dir)
@@ -95,20 +94,11 @@ def main():
                 "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
             )
 
-    # Set seed before initializing model.
+    # 랜덤 시드 설정
     set_seed(training_args.seed)
 
-    # Get the datasets: you can either provide your own CSV/JSON/TXT training and evaluation files (see below)
-    # or just provide the name of one of the public datasets available on the hub at https://huggingface.co/datasets/
-    # (the dataset will be downloaded automatically from the datasets Hub).
-    #
-    # For CSV/JSON files, this script will use the column called 'text' or the first column if no column called
-    # 'text' is found. You can easily tweak this behavior (see below).
-    #
-    # In distributed training, the load_dataset function guarantee that only one local process can concurrently
-    # download the dataset.
+    # 데이터셋 설정, csv, json, txt 형식으로 주어지는 경우 별도의 column_name 설정이 없으면 "text"라고 표기된 column이 training data로 인식됩니다.
     if data_args.dataset_name is not None:
-        # Downloading and loading a dataset from the hub.
         raw_datasets = load_dataset(
             data_args.dataset_name, data_args.dataset_config_name, cache_dir=model_args.cache_dir
         )
@@ -144,7 +134,8 @@ def main():
         raw_datasets = load_dataset(
             extension, data_files=data_files, cache_dir=model_args.cache_dir, **dataset_args
         )
-        # If no validation data is there, validation_split_percentage will be used to divide the dataset.
+
+        # validation set이 존재하지 않으면, data_args의 data_split_percentage에 따라 데이터를 분리합니다.
         if "validation" not in raw_datasets.keys():
             raw_datasets["validation"] = load_dataset(
                 extension,
@@ -162,12 +153,7 @@ def main():
             )
 
 
-    # Load pretrained model and tokenizer
-    #
-    # Distributed training:
-    # The .from_pretrained methods guarantee that only one local process can concurrently
-    # download model & vocab.
-
+    # 기학습 가중치와 토크나이저 불러오기
     config_kwargs = {
         "cache_dir": model_args.cache_dir,
         "revision": model_args.model_revision,
@@ -215,23 +201,11 @@ def main():
         column_names = raw_datasets["validation"].column_names
     text_column_name = "text" if "text" in column_names else column_names[0]
 
-    # since this will be pickled to avoid _LazyModule error in Hasher force logger loading before tokenize_function
-    tok_logger = transformers.utils.logging.get_logger("transformers.tokenization_utils_base")
-
-    def tokenize_function(examples):
-        with CaptureLogger(tok_logger) as cl:
-            examples[text_column_name] = list(map(lambda x: str(x), examples[text_column_name]))
-            output = tokenizer(examples[text_column_name])
-        # clm input could be much much longer than block_size
-        if "Token indices sequence length is longer than the" in cl.out:
-            tok_logger.warning(
-                "^^^^^^^^^^^^^^^^ Please ignore the warning above - this long input will be chunked into smaller bits before being passed to the model."
-            )
-        return output
+    tokenize_args = {"text_column_name": text_column_name, "tokenizer": tokenizer}
 
     with training_args.main_process_first(desc="dataset map tokenization"):
         tokenized_datasets = raw_datasets.map(
-            tokenize_function,
+            send_along(tokenize_function, sent_along=tokenize_args),
             batched=True,
             num_proc=data_args.preprocessing_num_workers,
             remove_columns=column_names,
@@ -258,7 +232,7 @@ def main():
 
     with training_args.main_process_first(desc="grouping texts together"):
         lm_datasets = tokenized_datasets.map(
-            group_texts,
+            send_along(group_texts, sent_along=block_size),
             batched=True,
             num_proc=data_args.preprocessing_num_workers,
             load_from_cache_file=not data_args.overwrite_cache,

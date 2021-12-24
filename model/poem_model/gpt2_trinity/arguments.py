@@ -107,10 +107,10 @@ class DataTrainingArguments:
         metadata={"help": "The configuration name of the dataset to use (via the datasets library)."},
     )
     train_file: Optional[str] = field(
-        default="../../../data/poem_data/train.csv", metadata={"help": "The input training data file (a text file)."}
+        default="../../../data/poem_data/preprocess_data/total_train.csv", metadata={"help": "The input training data file (a text file)."}
     )
     validation_file: Optional[str] = field(
-        default="../../../data/poem_data/validation.csv",
+        default=None,
         metadata={
             "help": "An optional input evaluation data file to evaluate the perplexity on (a text file)."
         },
@@ -142,7 +142,7 @@ class DataTrainingArguments:
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
     validation_split_percentage: Optional[int] = field(
-        default=0,
+        default=10,
         metadata={
             "help": "The percentage of the train set used as validation set in case there's no validation split"
         },
@@ -197,7 +197,7 @@ class TrainingArguments(_TrainingArguments):
     do_eval: bool = field(default=True, metadata={"help": "Whether to run eval on the dev set."})
     do_predict: bool = field(default=False, metadata={"help": "Whether to run predictions on the test set."})
     evaluation_strategy: IntervalStrategy = field(
-        default="epochs",
+        default="epoch",
         metadata={"help": "The evaluation strategy to use."},
     )
 
