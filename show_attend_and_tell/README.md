@@ -52,7 +52,6 @@ std = [0.229, 0.224, 0.225]
 # Training
 
 시작 전에 훈련에 필요한 데이터를 만들어야합니다. 이는 [`create_input_files.py`](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell/create_input_files.py)을 Karpathy JSON file과 `train2014` and `val2014` 이미지 폴더로 point 해주고 실행하면 됩니다.
-[`train.py`](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell/train.py).
 
 처음부터 모델을 훈련하고 싶다면 
 
@@ -66,6 +65,9 @@ command line 에서 **caption an image** 를 하기 위해서는 다음과 같�
 
 [`eval.py`](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell/eval.py)에서는 validation set에 대한 BLEU-4 score를 계산해줍니다.
 
+모델의 성능을 평가하고 싶다면
+
+`python eval.py` 를 실행하면 됩니다.
 
 # Evaluation Score
 Evaluation metric으로는 BLEU-4 score를 활용했습니다. BLEU는 generated sentence가 reference setence에 얼마나 포함되는지를 나타내주는 지표이며, BLEU-4 의 경우 4-gram 방식입니다. 평가한 성능은 아래와 같습니다.
