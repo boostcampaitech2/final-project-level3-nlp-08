@@ -70,6 +70,10 @@ Poem generator model의 경우 저희가 학습시킨 이후 서비스에서 사
 
 
 ### Web
+```
+python web/app.py
+```
+web에 관련된 코드는 [이곳](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/web)에 공개되어 있습니다.
 
 ## Service Outputs
 
