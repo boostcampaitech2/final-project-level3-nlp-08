@@ -47,6 +47,7 @@ python data/crawl/crawl.py
 ```bash
 python model/vit_gpt2_train.py
 ```
+Vision Encoder Decoder model의 경우 저희가 학습시킨 이후 서비스에서 사용하는 가중치는 [여기](https://huggingface.co/ddobokki/vision-encoder-decoder-vit-gpt2-coco-ko)에 공개되어 있습니다.
 
 Show, attend and Tell 방식의 캡셔닝은 최종적으로 사용되지는 않았지만, 사용해보고 싶으시면 [여기](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell)을 확인해주시면 됩니다.
 
@@ -57,6 +58,8 @@ python model/gpt2_base_train.py
 
 # gpt2 trinity
 ```
+Poem generator model의 경우 저희가 학습시킨 이후 서비스에서 사용하는 가중치는 [여기](https://huggingface.co/ddobokki/gpt2_poem)에 공개되어 있습니다.
+
 ### Inference
 **Caption Model**
 
