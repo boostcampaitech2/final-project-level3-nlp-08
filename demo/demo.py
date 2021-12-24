@@ -10,7 +10,7 @@ from transformers import (
 )
 import torch
 
-from PIL import Image
+from flask import render_template
 
 from utils import ModelArgNames, generate_poems_from_image
 
@@ -44,7 +44,6 @@ if __name__ == "__main__":
             continue
 
         img_path = os.path.join(src_dir, filename)
-        img = Image.open(img_path).convert("RGB")
-
-        generated_texts = generate_poems_from_image(**models_dict, img=img, device=device)
+        generated_texts = generate_poems_from_image(**models_dict, img_path=img_path, device=device)
         print(generated_texts)
+
