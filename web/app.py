@@ -1,4 +1,4 @@
-import os
+from os.path import join, dirname, realpath
 
 from flask import Flask, request, redirect, render_template, flash, url_for
 from werkzeug.utils import secure_filename
@@ -15,7 +15,7 @@ from utils import *
 
 
 ALLOWED_EXTENSIONS = set(["png", "jpg", "jpeg"])
-UPLOAD_FOLDER = "web/assets/uploads"
+UPLOAD_FOLDER = join(dirname(realpath(__file__)), "web/assets/uploads")
 
 app = Flask(
     __name__, static_url_path="", static_folder="", template_folder="web/templates"
@@ -79,10 +79,8 @@ def upload_image():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(
-                # os.path.join(app.config["STATIC_FOLDER"], os.path.join(app.config["UPLOAD_FOLDER"], filename))
-                os.path.join(app.config["UPLOAD_FOLDER"], filename)
-            )
+            print(filename)
+            file.save(join(app.config["UPLOAD_FOLDER"], filename))
             # print('upload_image filename: ' + filename)
             flash("Image successfully uploaded and displayed below")
             return render_template("responsive.html", filename=filename)
@@ -128,4 +126,4 @@ if __name__ == "__main__":
 
     print("generator model load")
 
-    app.run(host="0.0.0.0", port=6006, debug=True, use_reloader=True)
+    app.run(host="0.0.0.0", port=6006, debug=True, use_reloader=False)
