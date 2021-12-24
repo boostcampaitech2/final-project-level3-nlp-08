@@ -68,9 +68,11 @@ command line 에서 **caption an image** 를 하기 위해서는 다음과 같�
 
 
 # Evaluation Score
+Evaluation metric으로는 BLEU-4 score를 활용했습니다. BLEU는 generated sentence가 reference setence에 얼마나 포함되는지를 나타내주는 지표이며, BLEU-4 의 경우 4-gram 방식입니다. 평가한 성능은 아래와 같습니다.
+
 Beam Size | Validation BLEU-4 | Test BLEU-4 |
 :---: | :---: | :---: |
-5 | 16.98 | 10.17 |
+1 | 16.98 | 10.17 |
 
 
 ### 예시
