@@ -78,4 +78,8 @@ Beam Size | Validation BLEU-4 | Test BLEU-4 |
 
 
 ### 예시
-![image](https://user-images.githubusercontent.com/47168115/147264761-5224a20c-4edd-4b7f-a970-bf0e352d1a88.png)
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/47168115/147264761-5224a20c-4edd-4b7f-a970-bf0e352d1a88.png" style="display: inline" width=700>
+    <img src="https://user-images.githubusercontent.com/47168115/147340223-549a0975-9731-4947-a8a9-acd6f543b4e5.png" style="display: inline" width=700>
+    <img src="https://user-images.githubusercontent.com/47168115/147340276-22ad9cc3-35aa-4cc8-b44d-522e646ddce3.png" style="display: inline" width=700>
+</p>
