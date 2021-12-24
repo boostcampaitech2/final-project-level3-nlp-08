@@ -46,6 +46,8 @@ python data/crawl/crawl.py
 ```bash
 sh run.sh
 ```
+### Inference
+
 
 ## Service Outputs
 
@@ -54,3 +56,19 @@ sh run.sh
     <img src="https://i.imgur.com/Yy2ryQv.jpg" style="display: inline" width=30%>
     <img src="https://i.imgur.com/PZBoL5C.png" style="display: inline" width="30%">
 </p>
+
+## Reference
+
+- [MS COCO](https://cocodataset.org/#home)
+- [AI HUB 한국어 이미지 설명 데이터셋](https://aihub.or.kr/opendata/keti-data/recognition-visual/KETI-01-003)
+- [국립국어원 모두의 말뭉치 비출판물 데이터](https://corpus.korean.go.kr/)
+- [근현대시 데이터](www.baedalmal.com/)
+- [글틴 시 데이터](https://teen.munjang.or.kr/archives/category/write/poetry)
+- [디카시 마니아 시, 이미지 데이터](https://cafe.daum.net/dicapoetry/1aSh)
+- [Show, Attend and Tell: Neural Image Caption Generation with Visual Attention](https://arxiv.org/pdf/1502.03044.pdf)
+- [SP-GPT2: Semantics Improvement in Vietnamese Poetry Generation (GPT2 + LSTM)](https://arxiv.org/abs/2110.15723)
+- [CCPM: A Chinese Classical Poetry Matching Dataset (CCPM Evaluation)](https://arxiv.org/abs/2106.01979)
+- [Automatic Poetry Generation from Prosaic Text](https://aclanthology.org/2020.acl-main.223.pdf)
+- [MixPoet: Diverse Poetry Generation via Learning Controllable Mixed Latent Space (Mixed Latent Space 를 사용한 시 generation)](https://ojs.aaai.org/index.php/AAAI/article/view/6488)
+- [Introducing Aspects of Creativity in Automatic Poetry Generation (크라우드소싱 eval + 그 외 insight)](https://arxiv.org/pdf/2002.02511.pdf)
+- [Lingxi: A Diversity-aware Chinese Modern Poetry Generation System lower self BLEU score + human eval](https://arxiv.org/pdf/2108.12108.pdf)
