@@ -6,12 +6,14 @@ from caption_model.vit_gpt2.run_train import train
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # data_arg
-    parser.add_argument("--output_dir", type=str, default="./vit_gpt2_caption_model")
-    parser.add_argument("--data_dir", type=str, default="../data/caption_data")
+    parser.add_argument(
+        "--output_dir", type=str, default="./model/caption_model/vit_gpt2"
+    )
+    parser.add_argument("--data_dir", type=str, default="./data/caption_data")
     parser.add_argument(
         "--ms_coco_kor_file_path",
         type=str,
-        default="../data/caption_data/MSCOCO_train_val_Korean.json",
+        default="./data/caption_data/MSCOCO_train_val_Korean.json",
     )
     parser.add_argument(
         "--encoder_model_name_or_path",
