@@ -193,8 +193,7 @@ def main():
     )
     model.resize_token_embeddings(len(tokenizer))
 
-    # Preprocessing the datasets.
-    # First we tokenize all the texts.
+    # 불러온 데이터를 토크나이징 합니다.
     if training_args.do_train:
         column_names = raw_datasets["train"].column_names
     else:
@@ -213,6 +212,8 @@ def main():
             desc="Running tokenizer on dataset",
         )
 
+
+    # 데이터를 block_size 단위로 병합합니다.
     if data_args.block_size is None:
         block_size = tokenizer.model_max_length
         if block_size > 1024:
@@ -254,7 +255,7 @@ def main():
             eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
     
 
-    # Initialize Trainer
+    # Trainer 초기화
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -264,14 +265,14 @@ def main():
         data_collator=default_data_collator,
     )
 
-    #wandb
+    # wandb 설정
     if training_args.report_to == "wandb":
         wandb.init(project="kogpt_trinity_poem", 
             name="kogpt_trinity_finetuning",
             tags=["baseline", "finetune"],
             group="kogpt_trinity_poem")
 
-    # Training
+    # 학습 코드
     if training_args.do_train:
         checkpoint = None
         if training_args.resume_from_checkpoint is not None:
