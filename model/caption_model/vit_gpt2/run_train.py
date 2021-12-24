@@ -5,7 +5,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from nltk.translate.bleu_score import corpus_bleu
 
-from utils import read_json, get_data_df, get_pixel_values_and_tokenized_labels
+from caption_model.vit_gpt2.utils import (
+    read_json,
+    get_data_df,
+    get_pixel_values_and_tokenized_labels,
+)
 from transformers import (
     VisionEncoderDecoderModel,
     ViTFeatureExtractor,
@@ -14,10 +18,10 @@ from transformers import (
     Seq2SeqTrainer,
     default_data_collator,
 )
-from dataset import COCODataset
+from caption_model.vit_gpt2.dataset import COCODataset
 
 
-def main(args):
+def train(args):
 
     # 데이터 로드 및 feature_extractor, tokenizer 선언
     coco = read_json(args.ms_coco_kor_file_path)
@@ -101,46 +105,6 @@ def main(args):
     )
     trainer.train()
 
-    model.save_pretrained("./finetuned")
-    feature_extractor.save_pretrained("./finetuned")
-    tokenizer.save_pretrained("./finetuned")
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    # data_arg
-    parser.add_argument("--data_dir", type=str, default="../../../data/caption_data")
-    parser.add_argument(
-        "--ms_coco_kor_file_path",
-        type=str,
-        default="../../../data/caption_data/MSCOCO_train_val_Korean.json",
-    )
-    parser.add_argument("--model_dir", type=str, default="./model")
-    parser.add_argument("--output_dir", type=str, default="./finetuned")
-    parser.add_argument(
-        "--encoder_model_name_or_path",
-        type=str,
-        default="google/vit-base-patch16-224-in21k",
-    )
-    parser.add_argument(
-        "--decoder_model_name_or_path", type=str, default="skt/kogpt2-base-v2"
-    )
-
-    # train_arg
-    parser.add_argument("--num_labels", type=int, default=1)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--num_train_epochs", type=int, default=5)
-    parser.add_argument("--batch_size", type=int, default=64)
-    parser.add_argument("--learning_rate", type=float, default=5e-5)
-    parser.add_argument("--gradient_accumulation_steps", type=int, default=1)
-    parser.add_argument("--weight_decay", type=float, default=0.01)
-
-    # eval_arg
-    parser.add_argument("--evaluation_strategy", type=str, default="steps")
-    parser.add_argument("--logging_steps", type=int, default=500)
-    parser.add_argument("--save_steps", type=int, default=500)
-    parser.add_argument("--eval_steps", type=int, default=500)
-    parser.add_argument("--save_total_limit", type=int, default=2)
-
-    args = parser.parse_args()
-    main(args)
+    model.save_pretrained(args.output_dir)
+    feature_extractor.save_pretrained(args.output_dir)
+    tokenizer.save_pretrained(args.output_dir)
