@@ -43,11 +43,24 @@ python data/crawl/crawl.py
 
 ### Train
 
+**Caption Model**
 ```bash
 sh run.sh
 ```
-### Inference
 
+Show, attend and Tell 방식의 캡셔닝은 최종적으로 사용되지는 않았지만, 사용해보고 싶으시면 [여기](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell)을 확인해주시면 됩니다.
+
+**Poem Model**
+```bash
+sh run.sh
+```
+
+
+
+### Inference
+**Caption Model**
+
+**Poem Model**
 
 ### Web
 
