@@ -51,6 +51,8 @@ Vision Encoder Decoder model의 경우 저희가 학습시킨 이후 서비스�
 
 Show, attend and Tell 방식의 캡셔닝은 최종적으로 사용되지는 않았지만, 사용해보고 싶으시면 [여기](https://github.com/boostcampaitech2/final-project-level3-nlp-08/tree/dev/merge/show_attend_and_tell)을 확인해주시면 됩니다.
 
+<br>
+
 **Poem Model**
 ```bash
 # gpt2 base
