@@ -59,8 +59,6 @@ def train(args):
     model.resize_token_embeddings(tokenizer.vocab_size + 2)
     model.to(device)
 
-    tokenizer.save_pretrained("./model")
-
     training_args = TrainingArguments(
         output_dir=args.output_dir,
         predict_with_generate=True,
