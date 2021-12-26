@@ -1,0 +1,114 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h1 class="ui center aligned header">Image2Poem</h1>
+<h3 class="ui center aligned header">Generate poem from image with AI</h3>
+
+<div class="ui text container" id="ui text container">
+
+    <div class=" ui placeholder segment">
+        <!-- <h2>Select a file to upload</h2> -->
+        <p>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        </p>
+        {% if filename %}
+        <div>
+            <img class="ui centered medium image" src="{{ url_for('display_image', filename=filename) }}" width="224"
+                height="224">
+        </div>
+        {% endif %}
+        <form method="post" action="/" enctype="multipart/form-data">
+            <dl>
+                <p>
+                    <input type="file" name="file" class="inputfile" id="embedpollfileinput" autocomplete="off"
+                        required>
+
+                    <label for="embedpollfileinput" class="ui large green center floated button">
+                        <i class="ui upload icon"></i>
+                        Upload image
+                    </label>
+                </p>
+            </dl>
+            <p>
+                <input type="submit" name="submit" class="inputfile" id="embedpollsubmitfileinput" autocomplete="off"
+                    required>
+                <label for="embedpollsubmitfileinput" class="ui large red center floated button">
+                    <i class="ui check icon"></i>
+                    submit
+                </label>
+            </p>
+        </form>
+
+        <style>
+            .grid.container {
+                margin-top: 5em;
+            }
+
+            .inputfile {
+                width: 0.1px;
+                height: 0.1px;
+                opacity: 0;
+                overflow: hidden;
+                position: absolute;
+                z-index: -1;
+            }
+        </style>
+    </div>
+
+</div>
+
+
+<div class="ui middle aligned center aligned grid container">
+    <!-- <input type="button" class="ui primary button" id="generate_button" onclick="generate_button({filename});"
+                value="Generate" /> -->
+    <input type="button" class="ui primary button" value="Generate"
+        onclick="window.location.href='{{ url_for( 'index', filename=filename) }}';">
+
+</div>
+
+<div class="ui middle aligned center aligned grid container" id="poem container">
+    {% if generated_poems %}
+    <h1 class="ui center aligned header">Select Poem You Want</h1>
+    <div class="ui middle aligned center aligned grid container" , style="padding-bottom:30px">
+        <div class="ui link cards">
+
+            {% for generated_poem in generated_poems %}
+
+            <div class="ui centered card" onclick="createCardWithImage(`{{ generated_poem }}`);" style="width :400px">
+
+                <div class="content">
+                    <div class="header"></div>
+                    <div class="description">
+                        {% for row in generated_poem.split('\n') %}
+                        {{row}}<br>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+<div id="poem-card-div" align="center" style="padding:30px 0 0">
+
+
+</div>
+<div align="center" class="addthis_inline_share_toolbox" style="padding:40px 0px 70px 0px"></div>
+
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script type="text/javascript" src="web/templates/js.js"></script>
+{% endblock %}
