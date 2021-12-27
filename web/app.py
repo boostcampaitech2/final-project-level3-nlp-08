@@ -123,4 +123,4 @@ if __name__ == "__main__":
 
     print("generator model load")
 
-    app.run(host="0.0.0.0", port=6006, debug=True, use_reloader=True)
+    app.run(host="0.0.0.0", port=6006, debug=True, use_reloader=False)
