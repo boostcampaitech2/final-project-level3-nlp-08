@@ -2,13 +2,13 @@ from os.path import join, dirname, realpath
 
 from flask import Flask, request, redirect, render_template, flash, url_for
 from werkzeug.utils import secure_filename
-# from transformers import (
-#     VisionEncoderDecoderModel,
-#     AutoModelForCausalLM,
-#     AutoTokenizer,
-#     PreTrainedTokenizerFast,
-#     ViTFeatureExtractor,
-# )
+from transformers import (
+    VisionEncoderDecoderModel,
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    PreTrainedTokenizerFast,
+    ViTFeatureExtractor,
+)
 import torch
 
 from utils import *
