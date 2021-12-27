@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+__pycache__
 # C extensions
 *.so
 
@@ -132,10 +132,16 @@ dmypy.json
 .vscode/
 
 # Data & Model
-data/
 outputs/
 
 wandb/
 finetuned/
 checkpoints/
 dataset/
+data/caption_data/MSCOCO_train_val_Korean.json
+checkpoints/
+dataset/
+
+# css
+web/web/semantic/
+web/semantic.json
