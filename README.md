@@ -65,8 +65,71 @@ Poem generator model의 경우 저희가 학습시킨 이후 서비스에서 사
 ### Inference
 **Caption Model**
 
+```python
+import requests
+import torch
+from PIL import Image
+from transformers import (
+    VisionEncoderDecoderModel, 
+    ViTFeatureExtractor, 
+    PreTrainedTokenizerFast,
+)
+
+# device setting
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# load feature extractor and tokenizer
+encoder_model_name_or_path = "ddobokki/vision-encoder-decoder-vit-gpt2-coco-ko"
+feature_extractor = ViTFeatureExtractor.from_pretrained(encoder_model_name_or_path)
+tokenizer = PreTrainedTokenizerFast.from_pretrained(encoder_model_name_or_path)
+
+# load model
+model = VisionEncoderDecoderModel.from_pretrained(encoder_model_name_or_path)
+model.to(device)
+
+# inference
+url = 'http://images.cocodataset.org/val2017/000000039769.jpg'
+with Image.open(requests.get(url, stream=True).raw) as img:
+    pixel_values = feature_extractor(images=img, return_tensors="pt").pixel_values
+
+generated_ids = model.generate(pixel_values.to(device),num_beams=5)
+generated_text = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
+
+>> ['고양이 두마리가 담요 위에 누워 있다.']
+```
 
 **Poem Model**
+```python
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+# device setting
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# load model and tokenizer
+model_name_or_path = "ddobokki/gpt2_poem"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+model = AutoModelForCausalLM.from_pretrained(model_name_or_path)
+model.to(device)
+
+keyword_start_token = "<k>"
+keyword_end_token = "</k>"
+text = "산 꼭대기가 보이는 경치"
+input_text = keyword_start_token + text + keyword_end_token
+
+input_ids = tokenizer.encode(input_text, return_tensors="pt").to(device)
+gen_ids = model.generate(
+    input_ids, max_length=64, num_beams=100, no_repeat_ngram_size=2
+)
+generated = tokenizer.decode(gen_ids[0, :].tolist(), skip_special_tokens=True)
+>> 오르락내리락
+산 꼭대기를 올려다보니
+아득히 멀고 아득한
+나뭇가지에 매달린
+작은 산새 한 마리
+이름 모를 풀 한포기 안고
+어디론가 훌쩍 떠나가 버렸다
+```
 
 
 ### Web
