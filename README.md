@@ -2,13 +2,7 @@
 
 # Look, Attend and Generate Poem 사진을 보고 시를 써내려가는 감성시인 서비스
 
-안녕하세요, 저희는 Naver Connect 재단에서 주최하는 Boostcamp AI Tech 2기 캠퍼들로 구성된 청계산셰르파 팀입니다.
-
-저희는 캠프 기간동안 모든 것을 생생하게 기억하고 나누는 `기록`과 `공유`라는 가치에 공감한 7명이 모여 팀을 구성했고, 서로가 서로의 가이드로서 좋은 영향을 주고받을 수 있는 셰르파가 되기를 원했습니다.
-
-또한 주니어 엔지니어들의 로망은 판교역 근처 회사들에서 일을 하는 것입니다. 저희는 판교역의 뒷산인 청계산을 부스트캠프 과정에 빗대어 완벽하게 등반해보겠다는 의미로 청계산과 셰르파를 더해 `청계산셰르파`라는 이름을 사용하게 되었습니다.
-
-해당 프로젝트는 청계산셰르파 팀에서 진행한 최종 프로젝트로 사용자가 이미지를 업로드하면 이미지에 걸맞는 시를 생성하여 카드형태로 다운로드 혹은 공유할 수 있는 웹서비스 형태로 구현되었습니다.
+해당 프로젝트는 네이버 커넥트재단 부스트캠프 AI Tech 2기 청계산셰르파 팀에서 진행한 최종 프로젝트로 사용자가 이미지를 업로드하면 이미지에 걸맞는 시를 생성하여 카드형태로 다운로드 혹은 공유할 수 있는 웹서비스입니다.
 
 <p align="center">
   <img src="https://i.imgur.com/eN7R6to.gif)" />
@@ -57,16 +51,77 @@ Show, attend and Tell 방식의 캡셔닝은 최종적으로 사용되지는 않
 ```bash
 # gpt2 base
 python model/gpt2_base_train.py
-
-# gpt2 trinity
 ```
 Poem generator model의 경우 저희가 학습시킨 이후 서비스에서 사용하는 가중치는 [이곳](https://huggingface.co/ddobokki/gpt2_poem)과 [이곳](https://huggingface.co/CheonggyeMountain-Sherpa/kogpt-trinity-poem)에 공개되어 있습니다.
 
 ### Inference
 **Caption Model**
 
+```python
+import requests
+import torch
+from PIL import Image
+from transformers import (
+    VisionEncoderDecoderModel, 
+    ViTFeatureExtractor, 
+    PreTrainedTokenizerFast,
+)
+
+# device setting
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# load feature extractor and tokenizer
+encoder_model_name_or_path = "ddobokki/vision-encoder-decoder-vit-gpt2-coco-ko"
+feature_extractor = ViTFeatureExtractor.from_pretrained(encoder_model_name_or_path)
+tokenizer = PreTrainedTokenizerFast.from_pretrained(encoder_model_name_or_path)
+
+# load model
+model = VisionEncoderDecoderModel.from_pretrained(encoder_model_name_or_path)
+model.to(device)
+
+# inference
+url = 'http://images.cocodataset.org/val2017/000000039769.jpg'
+with Image.open(requests.get(url, stream=True).raw) as img:
+    pixel_values = feature_extractor(images=img, return_tensors="pt").pixel_values
+
+generated_ids = model.generate(pixel_values.to(device),num_beams=5)
+generated_text = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
+
+>> ['고양이 두마리가 담요 위에 누워 있다.']
+```
 
 **Poem Model**
+```python
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+# device setting
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# load model and tokenizer
+model_name_or_path = "ddobokki/gpt2_poem"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+model = AutoModelForCausalLM.from_pretrained(model_name_or_path)
+model.to(device)
+
+keyword_start_token = "<k>"
+keyword_end_token = "</k>"
+text = "산 꼭대기가 보이는 경치"
+input_text = keyword_start_token + text + keyword_end_token
+
+input_ids = tokenizer.encode(input_text, return_tensors="pt").to(device)
+gen_ids = model.generate(
+    input_ids, max_length=64, num_beams=100, no_repeat_ngram_size=2
+)
+generated = tokenizer.decode(gen_ids[0, :].tolist(), skip_special_tokens=True)
+>> 오르락내리락
+산 꼭대기를 올려다보니
+아득히 멀고 아득한
+나뭇가지에 매달린
+작은 산새 한 마리
+이름 모를 풀 한포기 안고
+어디론가 훌쩍 떠나가 버렸다
+```
 
 
 ### Web
